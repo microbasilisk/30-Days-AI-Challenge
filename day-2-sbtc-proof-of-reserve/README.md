@@ -1,5 +1,6 @@
 # Day 2 — [AIBTC Skills Comp Day 2] sBTC Proof of Reserve
 > **Original PR:** https://github.com/BitflowFinance/bff-skills/pull/24
+> **Status:** Closed — resubmitted as [Day 5 v2 (PR #97)](../day-5-sbtc-proof-of-reserve-v2/)
 
 # sBTC Proof of Reserve Oracle
 

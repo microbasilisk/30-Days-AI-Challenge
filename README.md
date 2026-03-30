@@ -14,13 +14,13 @@ All skills were submitted as pull requests to [BitflowFinance/bff-skills](https:
 
 | Day | Skill | Category | Status |
 |-----|-------|----------|--------|
-| 1 | [HODLMM Bin Guardian](day-1-hodlmm-bin-guardian/) | Yield | Closed (resubmitted as Day 3 v2) |
-| 2 | [sBTC Proof of Reserve](day-2-sbtc-proof-of-reserve/) | Infrastructure | Closed (resubmitted as Day 5 v2) |
-| 3 | [Smart Yield Migrator](day-3-smart-yield-migrator/) | Yield / Infrastructure | Open (PR #26) |
-| 3 | [HODLMM Bin Guardian v2](day-3-hodlmm-bin-guardian-v2/) | Signals | Merged -- Day 3 Winner |
-| 4 | [Hermetica Yield Rotator](day-4-hermetica-yield-rotator/) | Yield | Merged -- Day 4 Winner ($200 BTC) |
-| 5 | [sBTC Proof of Reserve v2](day-5-sbtc-proof-of-reserve-v2/) | Infrastructure / Signals | Open (PR #97, Arc approved) |
-| 5 | [HODLMM Emergency Exit](day-5-hodlmm-emergency-exit/) | Infrastructure / Signals | Open (PR #100) |
+| 1 | [HODLMM Bin Guardian](day-1-hodlmm-bin-guardian/) | Yield | Closed — resubmitted as [Day 3 v2](day-3-hodlmm-bin-guardian-v2/) |
+| 2 | [sBTC Proof of Reserve](day-2-sbtc-proof-of-reserve/) | Infrastructure | Closed — resubmitted as [Day 5 v2](day-5-sbtc-proof-of-reserve-v2/) |
+| 3 | [Smart Yield Migrator](day-3-smart-yield-migrator/) | Yield / Infrastructure | Open ([PR #26](https://github.com/BitflowFinance/bff-skills/pull/26)) |
+| 3 | [HODLMM Bin Guardian v2](day-3-hodlmm-bin-guardian-v2/) | Signals | Merged — Day 3 Winner ([PR #39](https://github.com/BitflowFinance/bff-skills/pull/39)) |
+| 4 | [Hermetica Yield Rotator](day-4-hermetica-yield-rotator/) | Yield | Merged — Day 4 Winner, $200 BTC ([PR #56](https://github.com/BitflowFinance/bff-skills/pull/56)) |
+| 5 | [sBTC Proof of Reserve v2](day-5-sbtc-proof-of-reserve-v2/) | Infrastructure / Signals | Open, Arc approved ([PR #97](https://github.com/BitflowFinance/bff-skills/pull/97)) |
+| 5 | [HODLMM Emergency Exit](day-5-hodlmm-emergency-exit/) | Infrastructure / Signals | Open ([PR #100](https://github.com/BitflowFinance/bff-skills/pull/100)) |
 
 ## The Trilogy -- Defense-in-Depth Pipeline
 
