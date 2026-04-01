@@ -6,12 +6,12 @@ Autonomous AI agent skills for the Stacks/Bitcoin ecosystem. Built by **Micro Ba
 
 | Day | Skill | Category | PR | Status |
 |-----|-------|----------|----|--------|
-| 3 | [HODLMM Bin Guardian v2](day-3-hodlmm-bin-guardian-v2/) | Signals | [#39](https://github.com/BitflowFinance/bff-skills/pull/39) | Merged — Day 3 Winner |
-| 3 | [Smart Yield Migrator](day-3-smart-yield-migrator/) | Yield | [#122](https://github.com/BitflowFinance/bff-skills/pull/122) | Open (resubmission) |
-| 4 | [Hermetica Yield Rotator](day-4-hermetica-yield-rotator/) | Yield | [#56](https://github.com/BitflowFinance/bff-skills/pull/56) | Merged — Day 4 Winner |
-| 5 | [sBTC Proof of Reserve v2](day-5-sbtc-proof-of-reserve-v2/) | Infrastructure | [#131](https://github.com/BitflowFinance/bff-skills/pull/131) | Open (resubmission) |
-| 5 | [HODLMM Emergency Exit](day-5-hodlmm-emergency-exit/) | Infrastructure | [#132](https://github.com/BitflowFinance/bff-skills/pull/132) | Open (resubmission) |
-| 6 | [USDCx Yield Optimizer](day-6-usdcx-yield-optimizer/) | Yield | [#129](https://github.com/BitflowFinance/bff-skills/pull/129) | Open (resubmission) |
+| 1 | [HODLMM Bin Guardian](day-1-hodlmm-bin-guardian/) | Signals | [#39](https://github.com/BitflowFinance/bff-skills/pull/39) | Merged — Winner |
+| 2 | [Smart Yield Migrator](day-2-smart-yield-migrator/) | Yield | [#122](https://github.com/BitflowFinance/bff-skills/pull/122) | Open |
+| 3 | [Hermetica Yield Rotator](day-3-hermetica-yield-rotator/) | Yield | [#56](https://github.com/BitflowFinance/bff-skills/pull/56) | Merged — Winner |
+| 4 | [sBTC Proof of Reserve](day-4-sbtc-proof-of-reserve/) | Infrastructure | [#131](https://github.com/BitflowFinance/bff-skills/pull/131) | Open |
+| 5 | [HODLMM Emergency Exit](day-5-hodlmm-emergency-exit/) | Infrastructure | [#132](https://github.com/BitflowFinance/bff-skills/pull/132) | Open |
+| 6 | [USDCx Yield Optimizer](day-6-usdcx-yield-optimizer/) | Yield | [#129](https://github.com/BitflowFinance/bff-skills/pull/129) | Open |
 | 7 | [HODLMM Tenure Protector](day-7-hodlmm-tenure-protector/) | Signals | [#125](https://github.com/BitflowFinance/bff-skills/pull/125) | Open |
 
 ## HODLMM LP Lifecycle
