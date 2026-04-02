@@ -2,12 +2,11 @@
 /**
  * hodlmm-rebalance-arbiter — Decision gate for HODLMM LP rebalancing.
  *
- * Consumes 3 independent signals:
- *   1. hodlmm-bin-guardian   → Is a rebalance needed? (bin drift)
- *   2. hodlmm-tenure-protector → Is it safe to act? (Bitcoin block timing)
- *   3. sbtc-proof-of-reserve  → Is the sBTC peg healthy?
+ * Consumes 2 independent signals:
+ *   1. hodlmm-bin-guardian    → Is a rebalance needed? (bin drift, volume, slippage)
+ *   2. sbtc-proof-of-reserve  → Is the sBTC peg healthy? (on-chain reserve ratio)
  *
- * Outputs a single verdict: REBALANCE, WAIT, HOLD, or DEGRADED.
+ * Outputs a single verdict: REBALANCE, BLOCKED, IN_RANGE, or DEGRADED.
  *
  * Does NOT execute transactions. Does NOT move funds.
  * It answers one question: "Should I rebalance right now, or wait?"
@@ -23,20 +22,13 @@ import { Command } from "commander";
 // ── Constants ──────────────────────────────────────────────────────────────────
 
 const FETCH_TIMEOUT_MS = 30_000;
-const STALE_DATA_THRESHOLD_S = 300; // 5 minutes — data older than this is suspect
+
 const USER_AGENT = "bff-skills/hodlmm-rebalance-arbiter";
 
 // Bitflow & Hiro API bases
 const BITFLOW_BASE = "https://bff.bitflowapis.finance";
 const HIRO_BASE = "https://api.mainnet.hiro.so";
 const MEMPOOL_BASE = "https://mempool.space/api";
-const COINGECKO_BASE = "https://api.coingecko.com/api/v3";
-const BITFLOW_TICKER = "https://bitflow-sdk-api-gateway-7owjsmt8.uc.gateway.dev/ticker";
-
-// Tenure risk thresholds (seconds since last Bitcoin block)
-const TENURE_GREEN_MAX_S = 600;
-const TENURE_YELLOW_MAX_S = 900;
-const TENURE_RED_MAX_S = 1200;
 
 // HODLMM pool gates
 const MIN_TVL_USD = 10_000;
@@ -72,15 +64,6 @@ interface BinGuardianSignal {
   raw_action: string;
 }
 
-interface TenureSignal {
-  color: SignalColor;
-  tenure_age_s: number;
-  risk_level: string;
-  burn_block_height: number;
-  predicted_next_block_s: number;
-  stacks_tip_height: number;
-}
-
 interface ReserveSignal {
   color: SignalColor;
   reserve_ratio: number | null;
@@ -98,7 +81,6 @@ interface ArbiterResult {
   reason: string;
   signals: {
     bin_guardian: BinGuardianSignal;
-    tenure_protector: TenureSignal;
     sbtc_reserve: ReserveSignal;
   };
   blockers: string[];
@@ -182,7 +164,7 @@ async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
       },
     });
     if (res.status === 429) {
-      await new Promise(r => setTimeout(r, 1500));
+      await new Promise(r => setTimeout(r, 1500 + Math.random() * 1000));
       const retry = await fetch(url, {
         ...init,
         headers: { "User-Agent": USER_AGENT, Accept: "application/json", ...(init?.headers ?? {}) },
@@ -347,74 +329,7 @@ async function fetchBinGuardianSignal(wallet: string, poolId: string): Promise<B
   }
 }
 
-// ── Signal 2: Tenure Protector (inline) ────────────────────────────────────────
-
-async function fetchTenureSignal(): Promise<TenureSignal> {
-  const errorSignal: TenureSignal = {
-    color: "ERROR",
-    tenure_age_s: 9999,
-    risk_level: "CRITICAL",
-    burn_block_height: 0,
-    predicted_next_block_s: 0,
-    stacks_tip_height: 0,
-  };
-
-  try {
-    const [nodeInfo, blocksData, burnData] = await Promise.all([
-      fetchJson<{ tenure_height?: number; stacks_tip_height?: number; burn_block_height?: number }>(
-        `${HIRO_BASE}/v2/info`
-      ),
-      fetchJson<{ results: { burn_block_time: number; burn_block_height: number; height: number; tenure_height: number }[] }>(
-        `${HIRO_BASE}/extended/v2/blocks?limit=1`
-      ),
-      fetchJson<{ results: { burn_block_time: number; burn_block_height: number }[] }>(
-        `${HIRO_BASE}/extended/v2/burn-blocks?limit=10`
-      ),
-    ]);
-
-    const latestBlock = blocksData.results?.[0];
-    if (!latestBlock) return errorSignal;
-
-    const nowUnix = Math.floor(Date.now() / 1000);
-    const tenureAgeS = nowUnix - latestBlock.burn_block_time;
-
-    // Classify risk
-    let color: SignalColor = "GREEN";
-    let riskLevel = "GREEN";
-    if (tenureAgeS > TENURE_RED_MAX_S) {
-      color = "RED";
-      riskLevel = "CRITICAL";
-    } else if (tenureAgeS > TENURE_YELLOW_MAX_S) {
-      color = "RED";
-      riskLevel = "RED";
-    } else if (tenureAgeS > TENURE_GREEN_MAX_S) {
-      color = "YELLOW";
-      riskLevel = "YELLOW";
-    }
-
-    // Compute average gap for prediction
-    const burnBlocks = burnData.results ?? [];
-    const gaps: number[] = [];
-    for (let i = 0; i < burnBlocks.length - 1; i++) {
-      const gap = burnBlocks[i].burn_block_time - burnBlocks[i + 1].burn_block_time;
-      if (gap > 0) gaps.push(gap);
-    }
-    const avgGap = gaps.length > 0 ? gaps.reduce((a, b) => a + b, 0) / gaps.length : 600;
-
-    return {
-      color,
-      tenure_age_s: tenureAgeS,
-      risk_level: riskLevel,
-      burn_block_height: latestBlock.burn_block_height,
-      predicted_next_block_s: Math.round(avgGap),
-      stacks_tip_height: nodeInfo.stacks_tip_height ?? latestBlock.height,
-    };
-  } catch {
-    return errorSignal;
-  }
-}
-
-// ── Signal 3: sBTC Reserve (inline) ────────────────────────────────────────────
+// ── Signal 2: sBTC Reserve (inline) ────────────────────────────────────────────
 
 async function fetchReserveSignal(): Promise<ReserveSignal> {
   const errorSignal: ReserveSignal = {
@@ -577,14 +492,12 @@ async function fetchReserveSignal(): Promise<ReserveSignal> {
 
 function arbiterDecision(
   bin: BinGuardianSignal,
-  tenure: TenureSignal,
   reserve: ReserveSignal,
 ): { decision: ArbiterDecision; reason: string; blockers: string[]; retryAfter: string | null } {
   const blockers: string[] = [];
 
   // Any ERROR → DEGRADED
   if (bin.color === "ERROR") blockers.push("bin_guardian: data source unreachable");
-  if (tenure.color === "ERROR") blockers.push("tenure_protector: data source unreachable");
   if (reserve.color === "ERROR") blockers.push("sbtc_reserve: data source unreachable");
 
   if (blockers.length > 0) {
@@ -608,24 +521,8 @@ function arbiterDecision(
     };
   }
 
-  // Rebalance needed — check safety signals
-  const yellowCount = [tenure.color, reserve.color].filter(c => c === "YELLOW").length;
-
-  // Any RED → BLOCKED
-  if (tenure.color === "RED") {
-    const retryS = Math.max(30, tenure.predicted_next_block_s - tenure.tenure_age_s);
-    const retryAt = new Date(Date.now() + retryS * 1000).toISOString();
-    blockers.push(`tenure_protector: ${tenure.risk_level} — tenure stale (${(tenure.tenure_age_s / 60).toFixed(1)}m), prices unreliable`);
-    return {
-      decision: "BLOCKED",
-      reason: `Rebalance needed but blocked — tenure stale (${(tenure.tenure_age_s / 60).toFixed(1)}m). Executing at stale prices risks adverse fill. Wait for fresh Bitcoin block.`,
-      blockers,
-      retryAfter: retryAt,
-    };
-  }
-
+  // Rebalance needed — check sBTC reserve safety
   if (reserve.color === "RED") {
-    // Structural wait — sBTC peg issue, longer recovery
     const retryAt = new Date(Date.now() + 3600 * 1000).toISOString();
     blockers.push(`sbtc_reserve: RED — reserve ratio ${reserve.reserve_ratio?.toFixed(4) ?? "unknown"}, peg unhealthy`);
     return {
@@ -636,41 +533,22 @@ function arbiterDecision(
     };
   }
 
-  // Double YELLOW → BLOCKED (environment degrading on multiple fronts)
-  if (yellowCount >= 2) {
-    const retryS = Math.max(60, tenure.predicted_next_block_s - tenure.tenure_age_s);
-    const retryAt = new Date(Date.now() + retryS * 1000).toISOString();
-    blockers.push("tenure_protector: YELLOW — tenure aging");
-    blockers.push("sbtc_reserve: YELLOW — reserve slightly below 1:1");
+  if (reserve.color === "YELLOW") {
     return {
-      decision: "BLOCKED",
-      reason: "Rebalance needed but two caution signals active simultaneously. One YELLOW is acceptable risk; two means the environment is degrading on multiple fronts. Wait until at least one clears to GREEN.",
-      blockers,
-      retryAfter: retryAt,
+      decision: "REBALANCE",
+      reason: `Bins out of range (active: ${bin.active_bin}, position: ${bin.user_bin_range?.min ?? "?"}–${bin.user_bin_range?.max ?? "?"}). sBTC reserve at YELLOW — acceptable risk. Safe to rebalance.`,
+      blockers: [],
+      retryAfter: null,
     };
   }
 
-  // All clear (all GREEN, or one YELLOW + rest GREEN) → REBALANCE
-  const safetyNote = yellowCount === 1
-    ? ` (one signal at YELLOW — acceptable risk)`
-    : "";
+  // All GREEN → REBALANCE
   return {
     decision: "REBALANCE",
-    reason: `All signals aligned${safetyNote}. Bins out of range (active: ${bin.active_bin}, position: ${bin.user_bin_range?.min ?? "?"}–${bin.user_bin_range?.max ?? "?"}). Safe to rebalance.`,
+    reason: `All signals aligned. Bins out of range (active: ${bin.active_bin}, position: ${bin.user_bin_range?.min ?? "?"}–${bin.user_bin_range?.max ?? "?"}). Safe to rebalance.`,
     blockers: [],
     retryAfter: null,
   };
-}
-
-// ── Check data freshness ───────────────────────────────────────────────────────
-
-function checkStaleness(tenure: TenureSignal): { stale: boolean; note: string } {
-  // If stacks tip is more than 5 minutes behind wall clock, data might be stale
-  // We approximate this by checking if tenure_age_s is unreasonably large
-  if (tenure.tenure_age_s > 7200) {
-    return { stale: true, note: "Tenure age >2h — Hiro API may be returning stale block data" };
-  }
-  return { stale: false, note: "" };
 }
 
 // ── Commands ───────────────────────────────────────────────────────────────────
@@ -704,7 +582,7 @@ async function runDoctor(): Promise<void> {
     checks.push({ name: "Bitflow Bins API", ok: false, detail: e instanceof Error ? e.message : String(e) });
   }
 
-  // 4. Hiro Stacks API (node info + blocks)
+  // 4. Hiro Stacks API (node info — used by sBTC reserve)
   try {
     const info = await fetchJson<{ stacks_tip_height: number; burn_block_height: number }>(`${HIRO_BASE}/v2/info`);
     checks.push({ name: "Hiro Stacks API", ok: info.stacks_tip_height > 0, detail: `stacks=${info.stacks_tip_height}, btc=${info.burn_block_height}` });
@@ -712,12 +590,16 @@ async function runDoctor(): Promise<void> {
     checks.push({ name: "Hiro Stacks API", ok: false, detail: e instanceof Error ? e.message : String(e) });
   }
 
-  // 5. Hiro Burn Blocks
+  // 5. Hiro Contract Reads (sBTC registry)
   try {
-    const data = await fetchJson<{ results: { burn_block_height: number }[] }>(`${HIRO_BASE}/extended/v2/burn-blocks?limit=1`);
-    checks.push({ name: "Hiro Burn Blocks", ok: data.results?.length > 0, detail: `latest: ${data.results?.[0]?.burn_block_height ?? "none"}` });
+    const res = await fetchJson<{ okay: boolean }>(`${HIRO_BASE}/v2/contracts/call-read/${SBTC_REGISTRY}/${SBTC_REGISTRY_NAME}/get-current-aggregate-pubkey`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sender: SBTC_REGISTRY, arguments: [] }),
+    });
+    checks.push({ name: "sBTC Registry Contract", ok: res.okay, detail: res.okay ? "aggregate pubkey readable" : "call failed" });
   } catch (e: unknown) {
-    checks.push({ name: "Hiro Burn Blocks", ok: false, detail: e instanceof Error ? e.message : String(e) });
+    checks.push({ name: "sBTC Registry Contract", ok: false, detail: e instanceof Error ? e.message : String(e) });
   }
 
   // 6. sBTC Supply (Clarity contract read)
@@ -741,6 +623,75 @@ async function runDoctor(): Promise<void> {
     checks.push({ name: "mempool.space", ok: false, detail: e instanceof Error ? e.message : String(e) });
   }
 
+  // 8. Bech32m self-test (BIP-350 test vectors)
+  try {
+    const CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
+    const GEN = [0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3];
+
+    function polymodTest(values: number[]): number {
+      let chk = 1;
+      for (const v of values) {
+        const b = chk >> 25;
+        chk = ((chk & 0x1ffffff) << 5) ^ v;
+        for (let i = 0; i < 5; i++) if ((b >> i) & 1) chk ^= GEN[i];
+      }
+      return chk;
+    }
+
+    function hrpExpandTest(hrp: string): number[] {
+      const ret: number[] = [];
+      for (let i = 0; i < hrp.length; i++) ret.push(hrp.charCodeAt(i) >> 5);
+      ret.push(0);
+      for (let i = 0; i < hrp.length; i++) ret.push(hrp.charCodeAt(i) & 31);
+      return ret;
+    }
+
+    function convertBitsTest(data: Uint8Array, fromBits: number, toBits: number): number[] {
+      let acc = 0, bits = 0;
+      const result: number[] = [];
+      const maxV = (1 << toBits) - 1;
+      for (const value of data) {
+        acc = (acc << fromBits) | value;
+        bits += fromBits;
+        while (bits >= toBits) { bits -= toBits; result.push((acc >> bits) & maxV); }
+      }
+      if (bits > 0) result.push((acc << (toBits - bits)) & maxV);
+      return result;
+    }
+
+    function bech32mEncodeTest(hrp: string, witnessVersion: number, program: Uint8Array): string {
+      const witnessData = [witnessVersion, ...convertBitsTest(program, 8, 5)];
+      const expanded = hrpExpandTest(hrp).concat(witnessData).concat([0, 0, 0, 0, 0, 0]);
+      const poly = polymodTest(expanded) ^ 0x2bc830a3;
+      const checksum = Array.from({ length: 6 }, (_, i) => (poly >> (5 * (5 - i))) & 31);
+      return hrp + "1" + [...witnessData, ...checksum].map(d => CHARSET[d]).join("");
+    }
+
+    // BIP-350 test vectors — https://github.com/bitcoin/bips/blob/master/bip-0350.mediawiki
+    const vectors: { programHex: string; witnessVersion: number; hrp: string; expected: string }[] = [
+      { hrp: "bc", witnessVersion: 1, programHex: "751e76e8199196d454941c45d1b3a323f1433bd6751e76e8199196d454941c45d1b3a323f1433bd6", expected: "bc1pw508d6qejxtdg4y5r3zarvary0c5xw7kw508d6qejxtdg4y5r3zarvary0c5xw7kt5nd6y" },
+      { hrp: "bc", witnessVersion: 1, programHex: "79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798", expected: "bc1p0xlxvlhemja6c4dqv22uapctqupfhlxm9h8z3k2e72q4k9hcz7vqzk5jj0" },
+      { hrp: "tb", witnessVersion: 1, programHex: "000000c4a5cad46221b2a187905e5266362b99d5e91c6ce24d165dab93e86433", expected: "tb1pqqqqp399et2xygdj5xreqhjjvcmzhxw4aywxecjdzew6hylgvsesf3hn0c" },
+      { hrp: "bc", witnessVersion: 16, programHex: "751e", expected: "bc1sw50qgdz25j" },
+      { hrp: "bc", witnessVersion: 2, programHex: "751e76e8199196d454941c45d1b3a323", expected: "bc1zw508d6qejxtdg4y5r3zarvaryvaxxpcs" },
+    ];
+
+    let passed = 0;
+    for (const v of vectors) {
+      const program = new Uint8Array(Buffer.from(v.programHex, "hex"));
+      const result = bech32mEncodeTest(v.hrp, v.witnessVersion, program);
+      if (result.toLowerCase() === v.expected.toLowerCase()) passed++;
+    }
+
+    checks.push({
+      name: "Bech32m self-test",
+      ok: passed === vectors.length,
+      detail: `${passed}/${vectors.length} BIP-350 test vectors passed`,
+    });
+  } catch (e: unknown) {
+    checks.push({ name: "Bech32m self-test", ok: false, detail: e instanceof Error ? e.message : String(e) });
+  }
+
   const allOk = checks.every(c => c.ok);
   const noneOk = checks.every(c => !c.ok);
 
@@ -748,10 +699,10 @@ async function runDoctor(): Promise<void> {
     status: noneOk ? "error" : allOk ? "ok" : "degraded",
     checks,
     message: allOk
-      ? "All 7 data sources reachable. Arbiter ready — all 3 signals operational."
+      ? "All 8 checks passed (7 data sources + bech32m self-test). Arbiter ready."
       : noneOk
-        ? "All data sources unreachable. Check network connectivity."
-        : `Some sources degraded: ${checks.filter(c => !c.ok).map(c => c.name).join(", ")}`,
+        ? "All checks failed. Check network connectivity."
+        : `Some checks degraded: ${checks.filter(c => !c.ok).map(c => c.name).join(", ")}`,
   };
 
   console.log(JSON.stringify(result, null, 2));
@@ -767,7 +718,7 @@ async function runArbiter(opts: { wallet: string; pool: string }): Promise<void>
       status: "error",
       decision: "DEGRADED",
       reason: "Invalid wallet address. Must be a Stacks mainnet address (SP...).",
-      signals: { bin_guardian: { color: "ERROR" }, tenure_protector: { color: "ERROR" }, sbtc_reserve: { color: "ERROR" } },
+      signals: { bin_guardian: { color: "ERROR" }, sbtc_reserve: { color: "ERROR" } },
       blockers: ["invalid_wallet"],
       retry_after: null,
       pool_id: poolId,
@@ -779,25 +730,17 @@ async function runArbiter(opts: { wallet: string; pool: string }): Promise<void>
     return;
   }
 
-  // Fetch all 3 signals in parallel
-  const [binSignal, tenureSignal, reserveSignal] = await Promise.all([
+  // Fetch both signals in parallel
+  const [binSignal, reserveSignal] = await Promise.all([
     fetchBinGuardianSignal(wallet, poolId),
-    fetchTenureSignal(),
     fetchReserveSignal(),
   ]);
 
-  // Check for stale data
-  const staleness = checkStaleness(tenureSignal);
-  if (staleness.stale && tenureSignal.color !== "ERROR") {
-    tenureSignal.color = "YELLOW";
-    tenureSignal.risk_level = "STALE_DATA";
-  }
-
   // Run decision gate
-  const { decision, reason, blockers, retryAfter } = arbiterDecision(binSignal, tenureSignal, reserveSignal);
+  const { decision, reason, blockers, retryAfter } = arbiterDecision(binSignal, reserveSignal);
 
   // Determine overall status
-  const errorCount = [binSignal.color, tenureSignal.color, reserveSignal.color].filter(c => c === "ERROR").length;
+  const errorCount = [binSignal.color, reserveSignal.color].filter(c => c === "ERROR").length;
   const status: ArbiterResult["status"] = errorCount > 0 ? "degraded" : "ok";
 
   const result: ArbiterResult = {
@@ -806,7 +749,6 @@ async function runArbiter(opts: { wallet: string; pool: string }): Promise<void>
     reason,
     signals: {
       bin_guardian: binSignal,
-      tenure_protector: tenureSignal,
       sbtc_reserve: reserveSignal,
     },
     blockers,
@@ -830,12 +772,12 @@ const program = new Command();
 
 program
   .name("hodlmm-rebalance-arbiter")
-  .description("Decision gate for HODLMM LP rebalancing — consumes 3 signals, outputs GO or WAIT")
+  .description("Decision gate for HODLMM LP rebalancing — consumes bin drift and sBTC reserve signals")
   .version("1.0.0");
 
 program
   .command("doctor")
-  .description("Verify all data sources across all 3 signals are reachable")
+  .description("Verify all data sources are reachable")
   .action(runDoctor);
 
 program
@@ -850,7 +792,7 @@ program
 
 program
   .command("run")
-  .description("Evaluate all 3 signals and output rebalance decision")
+  .description("Evaluate both signals and output rebalance decision")
   .requiredOption("--wallet <address>", "Stacks mainnet wallet address (SP...)")
   .option("--pool <id>", "HODLMM pool ID", "dlmm_1")
   .action(runArbiter);
