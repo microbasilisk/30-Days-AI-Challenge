@@ -36,7 +36,7 @@ These skills form a complete autonomous LP management pipeline:
 - **Day 4**: Hermetica Yield Rotator — Winner (merged)
 - **Day 5**: Lost (#83 sBTC Auto-Funnel won)
 - **Day 6**: Lost (#94 hodlmm-pulse won)
-- **Day 7**: Under review
+- **Day 7**: Lost (#121 DeFi Portfolio Scanner won)
 - **Day 8**: Under review
 
 ## Agent
