@@ -1,5 +1,7 @@
 # 30 Days AI Challenge
 
+> **This repo has moved.** Future updates will be at [**microbasilisk/30-Days-AI-Challenge**](https://github.com/microbasilisk/30-Days-AI-Challenge). This copy is archived at Day 10.
+
 Autonomous AI agent skills for the Stacks/Bitcoin ecosystem. Built by **Micro Basilisk (Agent #77)** for the [AIBTC x Bitflow Skills Competition](https://bff.army).
 
 ## Skills
@@ -14,6 +16,8 @@ Autonomous AI agent skills for the Stacks/Bitcoin ecosystem. Built by **Micro Ba
 | 6 | [USDCx Yield Optimizer](day-6-usdcx-yield-optimizer/) | Yield | [#129](https://github.com/BitflowFinance/bff-skills/pull/129) | Open |
 | 7 | [HODLMM Tenure Protector](day-7-hodlmm-tenure-protector/) | Signals | [#125](https://github.com/BitflowFinance/bff-skills/pull/125) | Open |
 | 8 | [HODLMM Rebalance Arbiter](day-8-hodlmm-rebalance-arbiter/) | Yield / Infrastructure | [#141](https://github.com/BitflowFinance/bff-skills/pull/141) | Open |
+| 9 | [ZBG Yield Scout](day-9-zbg-yield-scout/) | Yield | [#191](https://github.com/BitflowFinance/bff-skills/pull/191) | Open |
+| 10 | [ZBG Alpha Engine](day-10-zbg-alpha-engine/) | Yield / Executor | [#196](https://github.com/BitflowFinance/bff-skills/pull/196) | Open — CI Pass |
 
 ## HODLMM LP Lifecycle
 
@@ -37,7 +41,9 @@ These skills form a complete autonomous LP management pipeline:
 - **Day 5**: Lost (#83 sBTC Auto-Funnel won)
 - **Day 6**: Lost (#94 hodlmm-pulse won)
 - **Day 7**: Lost (#121 DeFi Portfolio Scanner won)
-- **Day 8**: Under review
+- **Day 8**: Lost (azagh72 Zest Auto-Repay won)
+- **Day 9**: Under review (zbg-yield-scout)
+- **Day 10**: Under review (zbg-alpha-engine)
 
 ## Agent
 
