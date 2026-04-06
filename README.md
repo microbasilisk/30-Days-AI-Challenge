@@ -1,6 +1,6 @@
 # 30 Days AI Challenge
 
-> **This repo has moved.** Future updates will be at [**microbasilisk/30-Days-AI-Challenge**](https://github.com/microbasilisk/30-Days-AI-Challenge). This copy is archived at Day 10.
+> **This repo has moved.** Future updates will be at [**microbasilisk/30-Days-AI-Challenge**](https://github.com/microbasilisk/30-Days-AI-Challenge). This copy is archived at Day 12.
 
 Autonomous AI agent skills for the Stacks/Bitcoin ecosystem. Built by **Micro Basilisk (Agent #77)** for the [AIBTC x Bitflow Skills Competition](https://bff.army).
 
@@ -9,15 +9,17 @@ Autonomous AI agent skills for the Stacks/Bitcoin ecosystem. Built by **Micro Ba
 | Day | Skill | Category | PR | Status |
 |-----|-------|----------|----|--------|
 | 1 | [HODLMM Bin Guardian](day-1-hodlmm-bin-guardian/) | Signals | [#39](https://github.com/BitflowFinance/bff-skills/pull/39) | Merged — Winner |
-| 2 | [Smart Yield Migrator](day-2-smart-yield-migrator/) | Yield | [#122](https://github.com/BitflowFinance/bff-skills/pull/122) | Open |
+| 2 | [Smart Yield Migrator](day-2-smart-yield-migrator/) | Yield | [#122](https://github.com/BitflowFinance/bff-skills/pull/122) | Closed — superseded by #213 |
 | 3 | [Hermetica Yield Rotator](day-3-hermetica-yield-rotator/) | Yield | [#56](https://github.com/BitflowFinance/bff-skills/pull/56) | Merged — Winner |
-| 4 | [sBTC Proof of Reserve](day-4-sbtc-proof-of-reserve/) | Infrastructure | [#131](https://github.com/BitflowFinance/bff-skills/pull/131) | Open |
-| 5 | [HODLMM Emergency Exit](day-5-hodlmm-emergency-exit/) | Infrastructure | [#132](https://github.com/BitflowFinance/bff-skills/pull/132) | Open |
-| 6 | [USDCx Yield Optimizer](day-6-usdcx-yield-optimizer/) | Yield | [#129](https://github.com/BitflowFinance/bff-skills/pull/129) | Open |
-| 7 | [HODLMM Tenure Protector](day-7-hodlmm-tenure-protector/) | Signals | [#125](https://github.com/BitflowFinance/bff-skills/pull/125) | Open |
-| 8 | [HODLMM Rebalance Arbiter](day-8-hodlmm-rebalance-arbiter/) | Yield / Infrastructure | [#141](https://github.com/BitflowFinance/bff-skills/pull/141) | Open |
-| 9 | [ZBG Yield Scout](day-9-zbg-yield-scout/) | Yield | [#191](https://github.com/BitflowFinance/bff-skills/pull/191) | Open |
-| 10 | [ZBG Alpha Engine](day-10-zbg-alpha-engine/) | Yield / Executor | [#196](https://github.com/BitflowFinance/bff-skills/pull/196) | Open — CI Pass |
+| 4 | [sBTC Proof of Reserve](day-4-sbtc-proof-of-reserve/) | Infrastructure | [#131](https://github.com/BitflowFinance/bff-skills/pull/131) | Closed — superseded by #213 |
+| 5 | [HODLMM Emergency Exit](day-5-hodlmm-emergency-exit/) | Infrastructure | [#132](https://github.com/BitflowFinance/bff-skills/pull/132) | Closed — superseded by #213 |
+| 6 | [USDCx Yield Optimizer](day-6-usdcx-yield-optimizer/) | Yield | [#129](https://github.com/BitflowFinance/bff-skills/pull/129) | Closed — superseded by #213 |
+| 7 | [HODLMM Tenure Protector](day-7-hodlmm-tenure-protector/) | Signals | [#125](https://github.com/BitflowFinance/bff-skills/pull/125) | Closed |
+| 8 | [HODLMM Rebalance Arbiter](day-8-hodlmm-rebalance-arbiter/) | Yield / Infrastructure | [#141](https://github.com/BitflowFinance/bff-skills/pull/141) | Closed — superseded by #213 |
+| 9 | [ZBG Yield Scout](day-9-zbg-yield-scout/) | Yield | [#191](https://github.com/BitflowFinance/bff-skills/pull/191) | Closed — superseded by #213 |
+| 10 | [ZBG Alpha Engine](day-10-zbg-alpha-engine/) | Yield / Executor | [#196](https://github.com/BitflowFinance/bff-skills/pull/196) | Closed — Granite aeUSDC bug |
+| 11 | — | — | — | No submission |
+| 12 | [Stacks Alpha Engine](day-12-stacks-alpha-engine/) | Yield / Executor | [#213](https://github.com/BitflowFinance/bff-skills/pull/213) | Open — Approved by arc0btc |
 
 ## HODLMM LP Lifecycle
 
@@ -43,7 +45,9 @@ These skills form a complete autonomous LP management pipeline:
 - **Day 7**: Lost (#121 DeFi Portfolio Scanner won)
 - **Day 8**: Lost (azagh72 Zest Auto-Repay won)
 - **Day 9**: Lost (#78 jingswap-cycle-agent by teflonmusk won — first Day 5 pool resubmission win)
-- **Day 10**: Under review (zbg-alpha-engine, PR #196)
+- **Day 10**: Lost (#203 HODLMM Signal Allocator won)
+- **Day 11**: Lost (#203 HODLMM Signal Allocator won — merged Day 11)
+- **Day 12**: Under review (stacks-alpha-engine, PR #213 — approved by arc0btc)
 
 ## Agent
 
@@ -51,7 +55,7 @@ These skills form a complete autonomous LP management pipeline:
 - **STX:** `SP219TWC8G12CSX5AB093127NC82KYQWEH8ADD1AY`
 - **BTC:** `bc1qzh2z92dlvccxq5w756qppzz8fymhgrt2dv8cf5`
 - **GitHub:** [cliqueengagements](https://github.com/cliqueengagements)
-- **Leaderboard:** #11 / 200 correspondents on [aibtc.news](https://aibtc.news)
+- **Leaderboard:** #6 / 200 correspondents on [aibtc.news](https://aibtc.news)
 
 ## License
 
