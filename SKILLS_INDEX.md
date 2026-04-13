@@ -12,4 +12,10 @@ Tracking all skills built during the 30 Days AI Challenge.
 | 6 | [usdcx-yield-optimizer](day-6-usdcx-yield-optimizer/) | Open (resubmission #129) | #129 |
 | 7 | [hodlmm-tenure-protector](day-7-hodlmm-tenure-protector/) | **Deprecated** — flawed premise | #125 (closed) |
 | 8  | [hodlmm-rebalance-arbiter](day-8-hodlmm-rebalance-arbiter/) | Open — v2 (2-signal gate) | #141 |
-
+| 9 | [zbg-yield-scout](day-9-zbg-yield-scout/) | Closed | #191 |
+| 10 | [zbg-alpha-engine](day-10-zbg-alpha-engine/) | Closed | #196 |
+| 11 | — | No submission | — |
+| 12 | [stacks-alpha-engine](day-12-stacks-alpha-engine/) | Open | #213 |
+| 13 | — | No submission | — |
+| 14 | [hodlmm-move-liquidity](day-14-hodlmm-move-liquidity/) | Merged — Day 14 Winner | #231 |
+| 15 | [sbtc-capital-allocator](day-15-sbtc-capital-allocator/) | Closed | #244 |
