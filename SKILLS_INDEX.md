@@ -21,3 +21,5 @@ Tracking all skills built during the 30 Days AI Challenge.
 | 15 | [sbtc-capital-allocator](day-15-sbtc-capital-allocator/) | Closed | #244 |
 | 16-18 | — | No submissions | — |
 | 19 | [bns-agent-manager](day-19-bns-agent-manager/) | Open — Day 19 submission | #294 |
+| 20-23 | — | No submissions | — |
+| 24 | [hodlmm-inventory-balancer](day-24-hodlmm-inventory-balancer/) | Open — Arc approved, awaiting merge · spawned aibtcdev/skills#338 | #494 |
