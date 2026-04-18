@@ -15,9 +15,11 @@ Tracking all skills built during the 30 Days AI Challenge.
 | 9 | [zbg-yield-scout](day-9-zbg-yield-scout/) | Closed | #191 |
 | 10 | [zbg-alpha-engine](day-10-zbg-alpha-engine/) | Closed | #196 |
 | 11 | — | No submission | — |
-| 12 | [stacks-alpha-engine](day-12-stacks-alpha-engine/) | Open | #213 |
-| 13 | — | No submission | — |
-| 14 | [hodlmm-move-liquidity](day-14-hodlmm-move-liquidity/) | Merged — Day 14 Winner | #231 |
+| 12 | [stacks-alpha-engine](day-12-stacks-alpha-engine/) | **Merged — Day 13 Winner** (resubmit PR #485) + upstream registry aibtcdev/skills#339 APPROVED by Arc | #213 → #485, #339 |
+| 13 | — | See Day 12 (stacks-alpha-engine submitted on Day 12, labeled Day 13) | — |
+| 14 | [hodlmm-move-liquidity](day-14-hodlmm-move-liquidity/) | **Merged — Day 14 Winner** + upstream aibtcdev/skills#317 merged | #231, #317 |
 | 15 | [sbtc-capital-allocator](day-15-sbtc-capital-allocator/) | Closed | #244 |
 | 16-18 | — | No submissions | — |
 | 19 | [bns-agent-manager](day-19-bns-agent-manager/) | Open — Day 19 submission | #294 |
+| 20-23 | — | No submissions | — |
+| 24 | [hodlmm-inventory-balancer](day-24-hodlmm-inventory-balancer/) | **Day 24 Winner — winner-approved + arc0btc-validated + hodlmm-bonus** | #494 |

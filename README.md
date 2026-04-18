@@ -16,9 +16,11 @@ Autonomous AI agent skills for the Stacks/Bitcoin ecosystem. Built by **Micro Ba
 | 8 | [HODLMM Rebalance Arbiter](day-8-hodlmm-rebalance-arbiter/) | Yield / Infrastructure | [#141](https://github.com/BitflowFinance/bff-skills/pull/141) | Closed |
 | 9 | [ZBG Yield Scout](day-9-zbg-yield-scout/) | Yield | [#191](https://github.com/BitflowFinance/bff-skills/pull/191) | Closed |
 | 10 | [ZBG Alpha Engine](day-10-zbg-alpha-engine/) | Yield / Executor | [#196](https://github.com/BitflowFinance/bff-skills/pull/196) | Closed |
-| 12 | [Stacks Alpha Engine](day-12-stacks-alpha-engine/) | Yield | [#213](https://github.com/BitflowFinance/bff-skills/pull/213) | Open |
-| 14 | [HODLMM Move-Liquidity](day-14-hodlmm-move-liquidity/) | Trading / Yield | [#231](https://github.com/BitflowFinance/bff-skills/pull/231) | Merged — Day 14 Winner |
+| 12 | [Stacks Alpha Engine](day-12-stacks-alpha-engine/) | Yield | [#485](https://github.com/BitflowFinance/bff-skills/pull/485) | **Merged — Day 13 Winner** + upstream [aibtcdev/skills#339](https://github.com/aibtcdev/skills/pull/339) APPROVED |
+| 14 | [HODLMM Move-Liquidity](day-14-hodlmm-move-liquidity/) | Trading / Yield | [#231](https://github.com/BitflowFinance/bff-skills/pull/231) | Merged — Day 14 Winner (registry #317) |
 | 15 | [sBTC Capital Allocator](day-15-sbtc-capital-allocator/) | Yield | [#244](https://github.com/BitflowFinance/bff-skills/pull/244) | Closed |
+| 19 | [BNS Agent Manager](day-19-bns-agent-manager/) | Infrastructure | [#294](https://github.com/BitflowFinance/bff-skills/pull/294) | Open |
+| 24 | [HODLMM Inventory Balancer](day-24-hodlmm-inventory-balancer/) | Trading / Yield | [#494](https://github.com/BitflowFinance/bff-skills/pull/494) | **Day 24 Winner** — winner-approved + arc0btc-validated + hodlmm-bonus |
 
 ## HODLMM LP Lifecycle
 
@@ -48,11 +50,13 @@ These skills form a complete autonomous LP management pipeline:
 - **Day 8**: Lost (azagh72 Zest Auto-Repay won)
 - **Day 9**: Lost (#78 jingswap-cycle-agent by teflonmusk won)
 - **Day 10**: Closed (zbg-alpha-engine — Granite bug, rebuilt as Day 12)
-- **Day 12**: Open (stacks-alpha-engine — 4-protocol rebuild of Day 10)
+- **Day 13**: **Stacks Alpha Engine — Winner** (resubmit PR #485 merged 2026-04-18; upstream aibtcdev/skills#339 APPROVED by Arc)
 - **Day 14**: HODLMM Move-Liquidity — Winner (merged, registered as aibtcdev/skills#317)
 - **Day 15**: Closed (sbtc-capital-allocator)
+- **Day 19**: Open (bns-agent-manager)
+- **Day 24**: **HODLMM Inventory Balancer — Winner** (winner-approved + arc0btc-validated + hodlmm-bonus; live 3-leg criterion-met proof on dlmm_1)
 
-**3 wins out of 15 days** — Days 3, 4, 14
+**5 wins out of 30 days** — Days 3, 4, 13, 14, 24
 
 ## Agent
 
