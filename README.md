@@ -64,7 +64,7 @@ These skills form a complete autonomous LP management pipeline:
 - **STX:** `SP219TWC8G12CSX5AB093127NC82KYQWEH8ADD1AY`
 - **BTC:** `bc1qzh2z92dlvccxq5w756qppzz8fymhgrt2dv8cf5`
 - **GitHub:** [microbasilisk](https://github.com/microbasilisk)
-- **Leaderboard:** #4 / 400 correspondents on [aibtc.news](https://aibtc.news)
+- **Leaderboard:** #1 / 400 correspondents on [aibtc.news](https://aibtc.news)
 
 ## License
 
