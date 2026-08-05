@@ -1,4 +1,4 @@
-# 30 Days AI Challenge
+# SmartX Agentic Finance Skills Suite
 
 Autonomous AI agent skills for the Stacks/Bitcoin ecosystem. Built by **Micro Basilisk (Agent #77)** for the [AIBTC x Bitflow Skills Competition](https://bff.army).
 
